@@ -25,7 +25,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: #f5f5f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .game-header {
@@ -34,16 +40,22 @@ body {
 
 .game-info {
   display: flex;
-  gap: 2rem;
+  gap: 3rem;
   font-size: 1.2rem;
+  background: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .game-board {
   display: grid;
   gap: 2px;
-  padding: 10px;
-  background: #ddd;
-  border-radius: 8px;
+  padding: 15px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
 }
 
 .game-controls {
@@ -52,83 +64,247 @@ body {
   margin: 1rem 0;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #f9f9f9;
+.game-controls button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.game-controls button:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .theme-selector {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-select {
-  padding: 0.5em;
+.theme-selector select {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.theme-selector select:hover {
+  border-color: #4CAF50;
 }
 
 /* 主题样式 */
 .theme-classic .game-board {
-  background: #ddd;
+  background: #e0e0e0;
 }
 
 .theme-sci-fi .game-board {
   background: #1a1a2e;
-  color: #00ff00;
+  box-shadow: 0 0 20px #00ff00;
 }
 
 .theme-cartoon .game-board {
   background: #ffd700;
-  color: #ff6b6b;
+  box-shadow: 0 0 20px #ff6b6b;
 }
 
 /* 游戏元素样式 */
 .cell {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
 .wall {
   background: #666;
+  border: 2px solid #555;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+}
+
+.player, .box, .target {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
 .player {
+  width: 30px;
+  height: 30px;
   background: #4CAF50;
-  color: white;
   border-radius: 50%;
+  margin: auto;
 }
 
 .box {
+  width: 34px;
+  height: 34px;
   background: #795548;
-  color: white;
+  border-radius: 4px;
+  margin: auto;
 }
 
 .target {
+  width: 20px;
+  height: 20px;
   background: #FFC107;
+  border-radius: 50%;
+  margin: auto;
 }
 
+/* 箱子在目标点上的样式 */
 .box.on-target {
-  background: #8BC34A;
+  background: #4CAF50;
+  border: 2px solid #2E7D32;
+}
+
+/* 添加教程样式 */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.tutorial-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-content h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.tutorial-content ul {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.tutorial-content li {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.tutorial-close {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tutorial-close:hover {
+  background: #45a049;
+}
+
+/* 动画效果 */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px #FFC107; }
+  to { box-shadow: 0 0 15px #FFC107; }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 1rem;
+        max-width: 100%;
+    }
+
+    .cell {
+        width: 35px;
+        height: 35px;
+    }
+
+    .game-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .game-controls button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .game-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+}
+
+/* 添加触摸控制按钮 */
+.touch-controls {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .touch-controls {
+        display: grid;
+    }
+}
+
+.touch-btn {
+    padding: 1rem;
+    background: rgba(76, 175, 80, 0.8);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.touch-btn:active {
+    background: rgba(76, 175, 80, 1);
+}
+
+/* 规则按钮特殊样式 */
+#rules-btn {
+    background: #2196F3;
+}
+
+#rules-btn:hover {
+    background: #1976D2;
 }

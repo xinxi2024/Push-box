@@ -1,3 +1,5 @@
+import { levels } from '../levels/index.js';
+
 // 游戏主组件
 export class Game {
     constructor() {
@@ -9,8 +11,11 @@ export class Game {
         this.moves = [];
         this.steps = 0;
         this.theme = 'classic';
-        this.gameContainer = document.getElementById('game-container');
+        this.gameContainer = document.getElementById('game-board');
         this.init();
+        // 自动加载第一关并重新开始
+        this.loadLevel(0);
+        this.restartLevel();
     }
 
     init() {
@@ -26,14 +31,18 @@ export class Game {
         this.gameContainer.innerHTML = '';
 
         // 创建游戏地图
-        const gameMap = document.createElement('div');
-        gameMap.className = `game-map theme-${this.theme}`;
+        const gameBoard = document.createElement('div');
+        gameBoard.className = 'game-board';
 
         // 获取地图尺寸
         const mapWidth = Math.max(...this.walls.map(w => w.x)) + 1;
         const mapHeight = Math.max(...this.walls.map(w => w.y)) + 1;
 
-        // 创建地图网格
+        // 设置网格布局
+        gameBoard.style.gridTemplateColumns = `repeat(${mapWidth}, 45px)`;
+        gameBoard.style.gridTemplateRows = `repeat(${mapHeight}, 45px)`;
+
+        // 创建所有单元格
         for (let y = 0; y < mapHeight; y++) {
             for (let x = 0; x < mapWidth; x++) {
                 const cell = document.createElement('div');
@@ -46,7 +55,9 @@ export class Game {
 
                 // 添加目标点
                 if (this.targets.some(target => target.x === x && target.y === y)) {
-                    cell.classList.add('target');
+                    const targetElement = document.createElement('div');
+                    targetElement.className = 'target';
+                    cell.appendChild(targetElement);
                 }
 
                 // 添加箱子
@@ -75,11 +86,11 @@ export class Game {
                     cell.appendChild(itemElement);
                 }
 
-                gameMap.appendChild(cell);
+                gameBoard.appendChild(cell);
             }
         }
 
-        this.gameContainer.appendChild(gameMap);
+        this.gameContainer.appendChild(gameBoard);
     }
 
     handleKeyPress(event) {
@@ -107,10 +118,6 @@ export class Game {
             case 'r':
             case 'R':
                 this.restartLevel();
-                return;
-            case 'h':
-            case 'H':
-                this.showHint();
                 return;
             case 'Escape':
                 this.toggleMenu();
@@ -217,12 +224,6 @@ export class Game {
         this.render();
     }
 
-    showHint() {
-        // 实现提示功能
-        console.log('提示功能待实现');
-        // TODO: 后续可以添加自动寻路算法来实现提示功能
-    }
-
     toggleMenu() {
         // 实现菜单切换功能
         const menu = document.getElementById('game-menu');
@@ -251,11 +252,9 @@ export class Game {
     }
 
     loadLevel(levelIndex) {
-        // 从关卡数据中获取当前关卡
         const level = levels[levelIndex];
         if (!level) return;
 
-        // 重置游戏状态
         this.currentLevel = levelIndex;
         this.moves = [];
         this.steps = 0;
@@ -269,19 +268,11 @@ export class Game {
             for (let x = 0; x < map[y].length; x++) {
                 const cell = map[y][x];
                 switch (cell) {
-                    case '#':
-                        this.walls.push({ x, y });
-                        break;
-                    case '@':
-                        this.player = { x, y };
-                        break;
-                    case '$':
-                        this.boxes.push({ x, y });
-                        break;
-                    case '.':
-                        this.targets.push({ x, y });
-                        break;
-                    case '*':
+                    case '#': this.walls.push({ x, y }); break;
+                    case '@': this.player = { x, y }; break;
+                    case '$': this.boxes.push({ x, y }); break;
+                    case '.': this.targets.push({ x, y }); break;
+                    case '*': 
                         this.boxes.push({ x, y });
                         this.targets.push({ x, y });
                         break;
@@ -304,6 +295,34 @@ export class Game {
         if (this.onStateChange) {
             this.onStateChange();
         }
+    }
+
+    showRules() {
+        const rules = levels[this.currentLevel]?.tutorial?.steps || [
+            '使用方向键(↑↓←→)移动角色(@)',
+            '将箱子($)推到目标点(.)上',
+            '箱子只能推，不能拉',
+            '按Z键可以撤销上一步',
+            'R键可以重新开始本关'
+        ];
+
+        const tutorialDiv = document.createElement('div');
+        tutorialDiv.className = 'tutorial-overlay';
+        tutorialDiv.innerHTML = `
+            <div class="tutorial-content">
+                <h3>游戏规则</h3>
+                <ul>
+                    ${rules.map(step => `<li>${step}</li>`).join('')}
+                </ul>
+                <button class="tutorial-close">关闭</button>
+            </div>
+        `;
+
+        document.body.appendChild(tutorialDiv);
+
+        tutorialDiv.querySelector('.tutorial-close').addEventListener('click', () => {
+            tutorialDiv.remove();
+        });
     }
 }
 
