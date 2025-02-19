@@ -1,4 +1,3 @@
-import './style.css'
 import { Game } from './components/Game.js'
 
 // 声明 game 变量在全局作用域
