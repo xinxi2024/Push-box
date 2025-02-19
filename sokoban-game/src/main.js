@@ -1,10 +1,12 @@
 import './style.css'
 import { Game } from './components/Game.js'
-import { levels } from './levels'
+
+// 声明 game 变量在全局作用域
+let game;
 
 // 等待 DOM 加载完成
 document.addEventListener('DOMContentLoaded', () => {
-    const game = new Game();
+    game = new Game();
     
     // 绑定按钮事件
     document.getElementById('undo-btn')?.addEventListener('click', () => {
@@ -22,9 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('theme-select')?.addEventListener('change', (e) => {
         game.changeTheme(e.target.value);
     });
-
-    // 自动加载第一关
-    game.loadLevel(0);
 
     // 添加触摸控制
     document.querySelectorAll('.touch-btn').forEach(btn => {
@@ -46,6 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 初始化游戏状态显示
+    updateGameInfo();
+    // 注册游戏状态更新回调
+    game.onStateChange = updateGameInfo;
 });
 
 // 更新游戏状态显示
@@ -53,16 +57,3 @@ function updateGameInfo() {
     document.getElementById('current-level').textContent = game.currentLevel + 1;
     document.getElementById('step-count').textContent = game.steps;
 }
-
-// 初始化游戏
-function initGame() {
-    // 加载第一关
-    game.loadLevel(0);
-    updateGameInfo();
-
-    // 注册游戏状态更新回调
-    game.onStateChange = updateGameInfo;
-}
-
-// 启动游戏
-initGame();
