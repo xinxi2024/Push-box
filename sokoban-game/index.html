@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>推箱子游戏 | Sokoban Game</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="game-container">
+        <div class="game-header">
+          <h1>推箱子</h1>
+          <div class="game-info">
+            <span class="level">关卡: <span id="current-level">1</span></span>
+            <span class="steps">步数: <span id="step-count">0</span></span>
+          </div>
+        </div>
+        <div id="game-board" class="game-board"></div>
+        <div class="game-controls">
+          <button id="undo-btn">撤销 (Z)</button>
+          <button id="restart-btn">重新开始 (R)</button>
+          <button id="hint-btn">提示 (H)</button>
+        </div>
+        <div class="theme-selector">
+          <label>主题：</label>
+          <select id="theme-select">
+            <option value="classic">经典</option>
+            <option value="sci-fi">科幻</option>
+            <option value="cartoon">卡通</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
