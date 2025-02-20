@@ -22,6 +22,7 @@
           <button id="undo-btn">撤销 (Z)</button>
           <button id="restart-btn">重新开始 (R)</button>
           <button id="rules-btn">游戏规则</button>
+          <button id="level-select-btn">选择关卡</button>
         </div>
         <div class="touch-controls">
           <button class="touch-btn" data-direction="up">↑</button>
@@ -37,6 +38,15 @@
             <option value="cartoon">卡通</option>
           </select>
         </div>
+      </div>
+    </div>
+    <div id="level-select" class="level-select-overlay hidden">
+      <div class="level-select-content">
+        <h3>选择关卡</h3>
+        <div class="level-grid">
+          <!-- 关卡按钮会通过 JavaScript 动态生成 -->
+        </div>
+        <button class="close-btn">关闭</button>
       </div>
     </div>
     <script type="module" src="./src/main.js"></script>

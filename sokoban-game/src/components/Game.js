@@ -16,6 +16,7 @@ export class Game {
         // 自动加载第一关并重新开始
         this.loadLevel(0);
         this.restartLevel();
+        this.initLevelSelect();
     }
 
     init() {
@@ -233,22 +234,18 @@ export class Game {
     }
 
     onLevelComplete() {
+        // 保存完成状态
+        const completedLevels = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+        if (!completedLevels.includes(this.currentLevel)) {
+            completedLevels.push(this.currentLevel);
+            localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
+        }
+
         // 显示完成提示
         alert(`恭喜！完成第${this.currentLevel + 1}关！\n使用了${this.steps}步`);
 
-        // 保存进度
-        localStorage.setItem('currentLevel', this.currentLevel);
-        localStorage.setItem('bestSteps', Math.min(
-            parseInt(localStorage.getItem('bestSteps') || Infinity),
-            this.steps
-        ));
-
-        // 加载下一关
-        if (this.currentLevel < levels.length - 1) {
-            this.loadLevel(this.currentLevel + 1);
-        } else {
-            alert('恭喜！你已经完成了所有关卡！');
-        }
+        // 更新选关界面
+        this.initLevelSelect();
     }
 
     loadLevel(levelIndex) {
@@ -323,6 +320,53 @@ export class Game {
         tutorialDiv.querySelector('.tutorial-close').addEventListener('click', () => {
             tutorialDiv.remove();
         });
+    }
+
+    initLevelSelect() {
+        // 创建选关对话框
+        const levelSelect = document.getElementById('level-select');
+        const levelGrid = levelSelect.querySelector('.level-grid');
+        const closeBtn = levelSelect.querySelector('.close-btn');
+
+        // 清空现有的关卡按钮
+        levelGrid.innerHTML = '';
+
+        // 生成关卡按钮，所有关卡都可选择
+        levels.forEach((level, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'level-btn';
+            btn.textContent = level.id;
+            
+            // 检查关卡是否完成，只标记完成状态
+            if (this.isLevelCompleted(index)) {
+                btn.classList.add('completed');
+            }
+
+            // 所有关卡都可以点击
+            btn.addEventListener('click', () => {
+                this.loadLevel(index);
+                levelSelect.classList.add('hidden');
+                // 重新开始选择的关卡
+                this.restartLevel();
+            });
+
+            levelGrid.appendChild(btn);
+        });
+
+        // 绑定关闭按钮
+        closeBtn.addEventListener('click', () => {
+            levelSelect.classList.add('hidden');
+        });
+
+        // 绑定选关按钮
+        document.getElementById('level-select-btn').addEventListener('click', () => {
+            levelSelect.classList.remove('hidden');
+        });
+    }
+
+    isLevelCompleted(levelIndex) {
+        const completedLevels = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+        return completedLevels.includes(levelIndex);
     }
 }
 
